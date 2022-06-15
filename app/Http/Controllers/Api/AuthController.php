@@ -23,13 +23,27 @@ class AuthController extends Controller
 
     //fetch single users from
     public function show($id) {
-        return User::find($id);
+        $user = User::find($id);
+
+        if($user){
+            return response()->json([
+                "success" => true,
+                "message" => "Data fetched successfull",
+                "data" => $user
+            ],200);
+        }else{
+            return response()->json([
+                "success" => false,
+                "message" => "Data not found!",
+
+            ],200);
+        }
     }
     //Delete user
     public function delete($id) {
 
         try{
-            return User::find($id)->delete();
+             User::findOrFail($id)->delete();
             return response()->json([
                 "success" => true,
                 "message" => "User deleted successfully"
@@ -71,6 +85,48 @@ class AuthController extends Controller
                 "message" => "User created successfully",
                 "data" => $data
             ],201);
+
+        }catch(Exception $err){
+            return response()->json([
+                "success" => false,
+                "errors" => $err
+            ],401);
+        }
+       
+    }
+
+    //Update user
+    public function update(Request $request,$id) {
+         
+        
+
+        $validator = Validator::make($request->all(),[
+            "name" => "required|string",
+            "email" => "required|email|unique:users,email",
+            "password" => "required|min:6"
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                "success" => false,
+                "errors" => $validator->errors()
+            ],401);
+        }
+
+        try{
+            $user = User::findOrFail($id);
+
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+
+
+       
+            return response()->json([
+                "success" => true,
+                "message" => "User updated successfully",
+                "data" => $user
+            ],200);
 
         }catch(Exception $err){
             return response()->json([
