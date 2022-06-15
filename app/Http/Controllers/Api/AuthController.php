@@ -12,4 +12,9 @@ class AuthController extends Controller
     public function index() {
         return User::all();
     }
+
+    //fetch single users from
+    public function show($id) {
+        return User::find($id);
+    }
 }
