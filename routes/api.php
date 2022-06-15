@@ -22,3 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //User routes
 Route::get("/users",[AuthController::class, 'index']);
 Route::get("/users/{id}",[AuthController::class, 'show']);
+Route::post("/users",[AuthController::class, 'store']);
+Route::get("/users/delete/{id}",[AuthController::class, 'delete']); //ekhane delete method o use kora jabe
