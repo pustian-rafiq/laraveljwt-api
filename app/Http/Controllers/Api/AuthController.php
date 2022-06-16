@@ -6,11 +6,33 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+      /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login']]);
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if ($token = $this->guard()->attempt($credentials)) {
+            return $this->respondWithToken($token);
+        }
+
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
     //fetch all users from
     public function index() {
         $users = User::latest()->get();
@@ -136,4 +158,28 @@ class AuthController extends Controller
         }
        
     }
+
+
+
+
+
+ 
+   protected function respondWithToken($token)
+   {
+       return response()->json([
+           'access_token' => $token,
+           'token_type' => 'bearer',
+           'expires_in' => $this->guard()->factory()->getTTL() * 60
+       ]);
+   }
+
+   /**
+    * Get the guard to be used during authentication.
+    *
+    * @return \Illuminate\Contracts\Auth\Guard
+    */
+   public function guard()
+   {
+       return Auth::guard();
+   }
 }

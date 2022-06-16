@@ -20,8 +20,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //User routes
-Route::get("/users",[AuthController::class, 'index']);
-Route::get("/users/{id}",[AuthController::class, 'show']);
-Route::post("/users",[AuthController::class, 'store']);
-Route::post("/users/{id}",[AuthController::class, 'update']);
-Route::get("/users/delete/{id}",[AuthController::class, 'delete']); //ekhane delete method o use kora jabe
+
+Route::group(['middleware'=>'auth:api','prefix'=>'auth'], function($router) {
+    Route::get("/users",[AuthController::class, 'index']);
+    Route::get("/users/{id}",[AuthController::class, 'show']);
+    Route::post("/users",[AuthController::class, 'store']);
+    Route::post("/users/{id}",[AuthController::class, 'update']);
+    Route::get("/users/delete/{id}",[AuthController::class, 'delete']);
+});
+
+
+ //ekhane delete method o use kora jabe
+
+Route::post("/login",[AuthController::class, 'login']);
