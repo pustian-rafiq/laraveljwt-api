@@ -27,6 +27,7 @@ Route::group(['middleware'=>'auth:api','prefix'=>'auth'], function($router) {
     Route::post("/users",[AuthController::class, 'store']);
     Route::post("/users/{id}",[AuthController::class, 'update']);
     Route::get("/users/delete/{id}",[AuthController::class, 'delete']);
+    Route::get("/logout",[AuthController::class, 'logout']);
 });
 
 
