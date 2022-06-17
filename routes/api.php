@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,11 +39,21 @@ Route::prefix('auth')->group(function (){
 });
 
 //Page routes
-
 Route::group(['middleware'=>'auth:api','prefix'=>'page'], function($router) {
     Route::post("/create",[PageController::class, 'store']);
 });
 
+//Post routes for person
+Route::group(['middleware'=>'auth:api','prefix'=>'person'], function($router) {
+    Route::post("/attach-post",[PostController::class, 'store']);
+    Route::get("/get-post",[PostController::class, 'getPostByPerson']);
+});
+
+//Post routes for page
+Route::group(['middleware'=>'auth:api','prefix'=>'page'], function($router) {
+    Route::post("/{id}/attach-post",[PostController::class, 'store']);
+});
+ 
 // Route::prefix('page')->group(function (){
 //     Route::middleware('auth:api')->group(function (){
 //         Route::get("/users",[AuthController::class, 'index']);
